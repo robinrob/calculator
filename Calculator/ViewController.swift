@@ -75,11 +75,11 @@ class ViewController: UIViewController {
         case "+":
             result = operands.reduce(0, +)
         case "-":
-            result = operands[0] - operands[1]
+            result = operands[1 ... operands.count-1].reduce(operands[0], -)
         case "*":
-            result = operands[0] * operands[1]
+            result = operands[1 ... operands.count-1].reduce(operands[0], *)
         case "/":
-            result = operands[0] / operands[1]
+            result = operands[1 ... operands.count-1].reduce(operands[0], /)
         default:
             break
         }
