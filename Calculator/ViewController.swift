@@ -13,8 +13,9 @@ class ViewController: UIViewController {
     @IBOutlet weak var display: UILabel!
     
     var isCleared: Bool = true
-    var operationInProgress: String = ""
+    var operationInProgress: String? = nil
     var operands: Array<Double> = []
+    var brain: Brain = Brain(result: 0.0)
     
     var displayValue: Double {
         get {
@@ -56,33 +57,25 @@ class ViewController: UIViewController {
         let title = sender.currentTitle!
         switch title {
         case "+", "-", "*", "/":
-            operationInProgress = title
-            operands.append(displayValue)
-            clearDisplay()
+            if (operationInProgress == nil) {
+                operationInProgress = title
+                operands.append(displayValue)
+                clearDisplay()
+            }
         case "=":
             operands.append(displayValue)
             compute()
         case "C":
             clearDisplay()
+            operationInProgress = nil
         default:
             break
         }
     }
     
     private func compute() {
-        var result: Double = 0
-        switch operationInProgress {
-        case "+":
-            result = operands.reduce(0, +)
-        case "-":
-            result = operands[1 ... operands.count-1].reduce(operands[0], -)
-        case "*":
-            result = operands[1 ... operands.count-1].reduce(operands[0], *)
-        case "/":
-            result = operands[1 ... operands.count-1].reduce(operands[0], /)
-        default:
-            break
-        }
+        brain.compute(operands: operands, operationInProgress: operationInProgress!)
+        let result: Double = brain.result
         
         if (floor(result) == result) {
             display.text = String(Int(result))
@@ -91,6 +84,7 @@ class ViewController: UIViewController {
         }
         
         operands = []
+        operationInProgress = nil
     }
     
     private func clearDisplay() {
